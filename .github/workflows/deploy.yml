@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   deploy:
@@ -22,19 +23,28 @@ jobs:
       - name: Prepare SSH key
         run: |
           mkdir -p ~/.ssh
-          printf "%s" "${{ secrets.GCP_VM_SSH_KEY }}" > ~/.ssh/gcp_vm_key
+          printf '%s\n' "${{ secrets.GCP_VM_SSH_KEY }}" > ~/.ssh/gcp_vm_key
           chmod 600 ~/.ssh/gcp_vm_key
+          ssh-keyscan -H "${{ secrets.GCP_VM_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: |
+          ssh -i ~/.ssh/gcp_vm_key \
+            -o StrictHostKeyChecking=yes \
+            "${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }}" \
+            "whoami && docker --version && docker compose version"
 
       - name: Deploy Docker Compose stack to VM
         env:
           VM_HOST: ${{ secrets.GCP_VM_HOST }}
           VM_USER: ${{ secrets.GCP_VM_USER }}
-          VM_SSH_KEY_PATH: ~/.ssh/gcp_vm_key
+          VM_SSH_KEY_PATH: /home/runner/.ssh/gcp_vm_key
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          IMAGE_NAME: ghcr.io/${{ github.repository }}:latest
         run: |
-          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY,,}:latest"
-          export IMAGE_NAME
+          IMAGE_NAME_LOWER=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
+          export IMAGE_NAME="$IMAGE_NAME_LOWER"
           bash scripts/deploy_vm.sh
 
       - name: Smoke test deployed API
