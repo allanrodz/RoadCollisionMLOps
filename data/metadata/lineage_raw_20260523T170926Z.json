@@ -1,0 +1,24 @@
+{
+  "stage": "data_acquisition",
+  "dataset_used_for_model": "ROA17 Traffic Collisions and Casualties by Month of Year",
+  "reference_datasets_available": {},
+  "source": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/ROA17/CSV/1.0/en",
+  "acquisition_mode": "url_or_path",
+  "created_utc": "20260523T170926Z",
+  "raw_path": "/home/runner/work/RoadCollisionMLOps/RoadCollisionMLOps/data/raw/roa17_raw_20260523T170926Z.csv",
+  "sha256": "2f0728474539ae3d6cff568d321a13949bafa30c1e446fc7c7e945d0b95a881c",
+  "row_count": 1482,
+  "target_row_count_before_filtering": 247,
+  "columns": [
+    "STATISTIC",
+    "Statistic Label",
+    "TLIST(A1)",
+    "Year",
+    "C01885V02316",
+    "Month of Year",
+    "UNIT",
+    "VALUE"
+  ],
+  "git_sha": "9a7317c1295cd251e9e376c889b80809e311bafe",
+  "notes": "This manifest provides data lineage for the raw ROA17 dataset. Validation later filters the target to All Fatal and Injury Collisions and removes All months aggregates."
+}

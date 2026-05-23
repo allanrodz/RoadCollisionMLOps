@@ -1,0 +1,19 @@
+{
+  "stage": "data_validation",
+  "created_utc": "20260523T170928Z",
+  "input_raw_path": "/home/runner/work/RoadCollisionMLOps/RoadCollisionMLOps/data/raw/roa17_raw_20260523T170926Z.csv",
+  "input_sha256": "2f0728474539ae3d6cff568d321a13949bafa30c1e446fc7c7e945d0b95a881c",
+  "output_path": "/home/runner/work/RoadCollisionMLOps/RoadCollisionMLOps/data/processed/validated_collisions.csv",
+  "row_count": 228,
+  "min_period": "2005-01",
+  "max_period": "2023-12",
+  "validation_rules": [
+    "year is integer between 1900 and 2100",
+    "month is integer between 1 and 12",
+    "collisions is non-negative numeric",
+    "no duplicate year/month rows",
+    "no missing months unless ALLOW_MISSING_MONTHS=true",
+    "Statistic Label is filtered to the configured TARGET_NAME",
+    "Month of Year / All months aggregate rows are excluded"
+  ]
+}
