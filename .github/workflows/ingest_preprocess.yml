@@ -1,0 +1,63 @@
+name: Data Acquisition and Preprocessing
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 1 * *"
+
+permissions:
+  contents: write
+
+jobs:
+  ingest-validate-features:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Acquire data
+        env:
+          DATA_URL: ${{ secrets.DATA_URL }}
+        run: |
+          if [ -n "${DATA_URL}" ]; then
+            python -m src.ingest --data-url "${DATA_URL}"
+          else
+            echo "DATA_URL secret not set. Using bundled ROA17 CSV from data/raw/."
+            python -m src.ingest --use-bundled
+          fi
+
+      - name: Validate data and create features
+        run: |
+          python -m src.validate_data
+          python -m src.features
+
+      - name: Upload data lineage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-lineage-and-features
+          path: |
+            data/raw/*.csv
+            data/processed/*.csv
+            data/metadata/*.json
+            model/feature_list.json
+
+      - name: Commit small public-data snapshots for versioning
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f data/raw/*.csv data/processed/*.csv data/metadata/*.json model/feature_list.json || true
+          git commit -m "chore(data): update collision data snapshot [skip ci]" || echo "No data changes to commit"
+          git push || echo "No push performed"

@@ -1,0 +1,30 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+.env
+*.db
+mlruns/
+mlartifacts/
+*.log
+
+# Generated runtime outputs are ignored by default.
+data/raw/roa17_raw_*.csv
+data/processed/*.csv
+data/metadata/*.json
+model/*.joblib
+model/*.json
+model/*.csv
+
+# Keep the real public CSO source CSVs in the repository for reproducible local runs.
+!data/raw/ROA17.20260523131010.csv
+!data/raw/ROA18.20260523130857.csv
+!data/raw/ROA19.20260523130918.csv
+!data/raw/ROA20.20260523125828.csv
+!data/raw/ROA27.20260523130654.csv
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/metadata/.gitkeep
+!model/.gitkeep
