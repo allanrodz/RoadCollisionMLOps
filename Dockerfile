@@ -14,7 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
 COPY src ./src
 COPY model ./model
-COPY data/sample ./data/sample
+COPY data/raw ./data/raw
+COPY data/processed ./data/processed
 
 EXPOSE 5000
 
